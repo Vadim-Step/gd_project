@@ -1,6 +1,7 @@
 from gd_classes import *
 import pygame
 from pygame import mixer
+import random
 
 FPS = 100
 
@@ -91,6 +92,7 @@ def start():
     moving_down = False
     fireworks = []
     smoke = []
+    pulsating_effects = []
     death = 0
     level = 0
     while True:
@@ -113,6 +115,31 @@ def start():
                 fon2 = pygame.transform.scale(load_image(file2), (tile_size * level_x, 450))
                 x = player.x
                 y = player.y
+                smoke_player = AnimatedSprite(load_image('smokepuff.png'), 8, 8,
+                                              player.rect.x - 50, player.y, True)
+                while len(pulsating_effects) < 20:
+                    if level == 1:
+                        pulsating_effect = AnimatedSprite(
+                            load_image(f'fire{random.choice([1, 2])}.png'), 10, 6,
+                            random.choice(range(100, tile_size * level_x)),
+                            random.choice(range(100, 400)), False)
+                    if level == 2:
+                        pulsating_effect = AnimatedSprite(
+                            load_image(f'effect{random.choice([1, 2])}.png'), 8, 2,
+                            random.choice(range(100, tile_size * level_x)),
+                            random.choice(range(100, 400)), False)
+                    if level == 3:
+                        pulsating_effect = AnimatedSprite(
+                            load_image(f'blueexplosion{random.choice([1, 2])}.png'), 4, 4,
+                            random.choice(range(100, tile_size * level_x)),
+                            random.choice(range(100, 400)), False)
+                    if not pygame.sprite.spritecollideany(pulsating_effect, wall_group) and \
+                            not pygame.sprite.spritecollideany(pulsating_effect, portal1_group) \
+                            and not pygame.sprite.spritecollideany(pulsating_effect, portal2_group) \
+                            and not pygame.sprite.spritecollideany(pulsating_effect, blade_group):
+                        pulsating_effects.append(pulsating_effect)
+                    else:
+                        pulsating_effect.kill()
             if event.type == pygame.MOUSEBUTTONDOWN and not flag:
                 if 925 <= event.pos[0] <= 975 and 25 <= event.pos[1] <= 75:
                     PAUSE = False
@@ -180,7 +207,7 @@ def start():
                     if not fireworks:
                         for i in range(25, 400, 50):
                             firework = AnimatedSprite(load_image('Firework.png'), 6, 5,
-                                                      player.rect.x - 25, i)
+                                                      player.rect.x - 25, i, False)
                             fireworks.append(firework)
                     FPS = 20
                     if death == 20:
@@ -198,7 +225,7 @@ def start():
                     player.collide_check(blade_group):
                 if not death:
                     death_effect = AnimatedSprite(load_image('death_effect1.png'), 8, 4,
-                                                  player.rect.x - 50, player.rect.y - 70)
+                                                  player.rect.x - 50, player.rect.y - 70, False)
                 FPS = 20
             if death == 20:
                 screen.blit(fon, (0, 0))
@@ -213,6 +240,7 @@ def start():
                 FPS = 100
                 fireworks = []
                 smoke = []
+                pulsating_effects = []
                 len_count, level, stage, percentage, camera.dy = 0, 0, 0, 0, 0
                 flag = True
                 audio.stop()
@@ -226,10 +254,10 @@ def start():
                     x = i.rect.x
                     break
             if death_effect:
-                death_effect.update()
+                death_effect.update(None, None)
                 death += 1
             for i in fireworks:
-                i.update()
+                i.update(None, None)
             if fireworks:
                 death += 1
             if count % 10 == 0:
@@ -238,21 +266,26 @@ def start():
             if not smoke:
                 for i in range(0, 400, 50):
                     smok = AnimatedSprite(load_image('Smoke.png'), 6, 5,
-                                          tile_size * level_x + 700, i)
+                                          tile_size * level_x + 700, i, False)
                     smoke.append(smok)
             for i in smoke:
-                i.update()
+                i.update(None, None)
             screen.blit(fon2, (x + 50, 75))
+            if count % 5 == 0:
+                for i in pulsating_effects:
+                    i.update(None, None)
             wall_group.draw(screen)
             spike_group.draw(screen)
             if not death:
                 player_group.draw(screen)
             portal1_group.draw(screen)
             portal2_group.draw(screen)
+            smoke_player.update(player.rect.x - 100, player.rect.y - 50)
             blade_group.draw(screen)
             death_group.draw(screen)
             font = pygame.font.Font(None, 50)
             pygame.draw.rect(screen, (76, 76, 76), (850, 25, 75, 50))
+
             len_count += speed
             to_blit = count_percent(level_x, tiles_group, player, percentage)
             percentage = to_blit

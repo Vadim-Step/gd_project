@@ -135,9 +135,10 @@ def generate_level(level, num=1):
 
 
 class AnimatedSprite(pygame.sprite.Sprite):
-    def __init__(self, sheet, columns, rows, x, y):
+    def __init__(self, sheet, columns, rows, x, y, spin):
         super().__init__(all_sprites, death_group)
         self.frames = []
+        self.spin = spin
         self.cut_sheet(sheet, columns, rows)
         self.cur_frame = 0
         self.image = self.frames[self.cur_frame]
@@ -152,9 +153,15 @@ class AnimatedSprite(pygame.sprite.Sprite):
                 self.frames.append(sheet.subsurface(pygame.Rect(
                     frame_location, self.rect.size)))
 
-    def update(self):
+    def update(self, x, y):
         self.cur_frame = (self.cur_frame + 1) % len(self.frames)
-        self.image = self.frames[self.cur_frame]
+        if self.spin:
+            self.image = pygame.transform.rotate(self.frames[self.cur_frame], 90)
+        else:
+            self.image = self.frames[self.cur_frame]
+        if x and y:
+            self.rect.x = x
+            self.rect.y = y
 
 
 tile_images = {
