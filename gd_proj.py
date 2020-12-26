@@ -89,6 +89,8 @@ def start():
     portal2 = False
     death_effect = False
     moving_down = False
+    fireworks = []
+    smoke = []
     death = 0
     level = 0
     while True:
@@ -99,16 +101,16 @@ def start():
             if lvl:
                 percentage, flag, audio, level = lvl
                 if level == 1:
-                    file = 'points.txt'
+                    file = 'gd_data/points.txt'
                     file2 = 'phon2.png'
                 if level == 2:
-                    file = 'points2.txt'
+                    file = 'gd_data/points2.txt'
                     file2 = 'fon.jpg'
                 if level == 3:
-                    file = 'points.txt'
+                    file = 'gd_data/points.txt'
                     file2 = 'city.jpg'
                 player, level_x, level_y = generate_level(load_level(file), level)
-                fon2 = pygame.transform.scale(load_image(file2), (tile_size * (level_x - 1), 450))
+                fon2 = pygame.transform.scale(load_image(file2), (tile_size * level_x, 450))
                 x = player.x
                 y = player.y
             if event.type == pygame.MOUSEBUTTONDOWN and not flag:
@@ -175,9 +177,11 @@ def start():
                     portal2 = False
             if pygame.sprite.spritecollideany(player, end_group):
                 if player.collide_check(end_group):
-                    if not death:
-                        death_effect = AnimatedSprite(load_image('Firework.png'), 6, 5,
-                                                      player.rect.x - 50, player.rect.y - 70)
+                    if not fireworks:
+                        for i in range(25, 400, 50):
+                            firework = AnimatedSprite(load_image('Firework.png'), 6, 5,
+                                                      player.rect.x - 25, i)
+                            fireworks.append(firework)
                     FPS = 20
                     if death == 20:
                         if level == 1:
@@ -207,6 +211,8 @@ def start():
                 death = False
                 death_effect = False
                 FPS = 100
+                fireworks = []
+                smoke = []
                 len_count, level, stage, percentage, camera.dy = 0, 0, 0, 0, 0
                 flag = True
                 audio.stop()
@@ -222,9 +228,20 @@ def start():
             if death_effect:
                 death_effect.update()
                 death += 1
+            for i in fireworks:
+                i.update()
+            if fireworks:
+                death += 1
             if count % 10 == 0:
                 for i in blade_group:
                     i.rotate()
+            if not smoke:
+                for i in range(0, 400, 50):
+                    smok = AnimatedSprite(load_image('Smoke.png'), 6, 5,
+                                          tile_size * level_x + 700, i)
+                    smoke.append(smok)
+            for i in smoke:
+                i.update()
             screen.blit(fon2, (x + 50, 75))
             wall_group.draw(screen)
             spike_group.draw(screen)

@@ -73,11 +73,11 @@ def generate_level(level, num=1):
                     Tile('blade1', x, y)
                 if level[y][x] == '%':
                     Tile('blade2', x, y)
-                if x == len(level[y]) - 1:
+                if x == len(level[y]) - 1 and 0 < y < 10:
                     Tile('end', x, y)
-                if x == 0:
+                elif x == 0:
                     Tile('start', x, y)
-                if level[y][x] == '#':
+                elif level[y][x] == '#':
                     Tile('wall', x, y)
                 if level[y][x] == ':':
                     Tile('empty', x, y)
@@ -160,8 +160,8 @@ class AnimatedSprite(pygame.sprite.Sprite):
 tile_images = {
     'wall2': load_image('block1.png'),
     'wall': load_image('gd_block.jpg'),
-    'end': load_image('block1.png'),
-    'start': load_image('block1.png'),
+    'end': load_image('gd_block.jpg'),
+    'start': load_image('gd_block.jpg'),
     'blade': load_image('sawblade.png'),
     'blade1': load_image('blade.png'),
     'blade2': load_image('sawblade1.png'),
