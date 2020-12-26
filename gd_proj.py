@@ -32,7 +32,7 @@ def start_level(event, flag):
             mixer.pre_init()
             mixer.init()
             audio = mixer.Sound('gd_data\gd_mus1.mp3')
-            # audio.play()
+            audio.play()
             return percentage, flag, audio, level
         return False
 
