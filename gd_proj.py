@@ -120,17 +120,17 @@ def start():
                 while len(pulsating_effects) < 20:
                     if level == 1:
                         pulsating_effect = AnimatedSprite(
-                            load_image(f'fire{random.choice([1, 2])}.png'), 10, 6,
+                            load_image(f'effect{random.choice([1, 2])}.png'), 10, 6,
                             random.choice(range(100, tile_size * level_x)),
                             random.choice(range(100, 400)), False)
                     if level == 2:
                         pulsating_effect = AnimatedSprite(
-                            load_image(f'effect{random.choice([1, 2])}.png'), 8, 2,
+                            load_image(f'effect{random.choice([3, 4])}.png'), 8, 2,
                             random.choice(range(100, tile_size * level_x)),
                             random.choice(range(100, 400)), False)
                     if level == 3:
                         pulsating_effect = AnimatedSprite(
-                            load_image(f'blueexplosion{random.choice([1, 2])}.png'), 4, 4,
+                            load_image(f'effect{random.choice([5, 6])}.png'), 4, 4,
                             random.choice(range(100, tile_size * level_x)),
                             random.choice(range(100, 400)), False)
                     if not pygame.sprite.spritecollideany(pulsating_effect, wall_group) and \
@@ -205,9 +205,16 @@ def start():
             if pygame.sprite.spritecollideany(player, end_group):
                 if player.collide_check(end_group):
                     if not fireworks:
-                        for i in range(25, 400, 50):
-                            firework = AnimatedSprite(load_image('Firework.png'), 6, 5,
-                                                      player.rect.x - 25, i, False)
+                        for i in range(25, 400, 100):
+                            if level == 1:
+                                firework = AnimatedSprite(load_image(f'firework1.png'), 6, 5,
+                                                          player.rect.x - 25, i, False)
+                            if level == 2:
+                                firework = AnimatedSprite(load_image(f'firework2.png'), 5, 8,
+                                                          player.rect.x - 25, i, False)
+                            if level == 3:
+                                firework = AnimatedSprite(load_image(f'firework3.png'), 5, 5,
+                                                          player.rect.x - 25, i, False)
                             fireworks.append(firework)
                     FPS = 20
                     if death == 20:
@@ -224,10 +231,17 @@ def start():
                     player.collide_check(spike_group) or \
                     player.collide_check(blade_group):
                 if not death:
-                    death_effect = AnimatedSprite(load_image('death_effect1.png'), 8, 4,
-                                                  player.rect.x - 50, player.rect.y - 70, False)
+                    if level == 1:
+                        death_effect = AnimatedSprite(load_image('death_effect1.png'), 8, 4,
+                                                     player.rect.x - 50, player.rect.y - 70, False)
+                    elif level == 2:
+                        death_effect = AnimatedSprite(load_image('death_effect2.png'), 4, 4,
+                                                     player.rect.x - 50, player.rect.y - 70, False)
+                    elif level == 3:
+                        death_effect = AnimatedSprite(load_image('death_effect3.png'), 5, 4,
+                                                     player.rect.x - 50, player.rect.y - 70, False)
                 FPS = 20
-            if death == 20:
+            if (level == 1 and death == 20) or (level > 1 and death == 15):
                 screen.blit(fon, (0, 0))
                 screen.blit(lvl1, (450, 250))
                 screen.blit(lvl2, (850, 250))
@@ -254,10 +268,10 @@ def start():
                     x = i.rect.x
                     break
             if death_effect:
-                death_effect.update(None, None)
+                death_effect.update()
                 death += 1
             for i in fireworks:
-                i.update(None, None)
+                i.update()
             if fireworks:
                 death += 1
             if count % 10 == 0:
@@ -269,23 +283,23 @@ def start():
                                           tile_size * level_x + 700, i, False)
                     smoke.append(smok)
             for i in smoke:
-                i.update(None, None)
+                i.update()
             screen.blit(fon2, (x + 50, 75))
             if count % 5 == 0:
                 for i in pulsating_effects:
-                    i.update(None, None)
+                    i.update()
             wall_group.draw(screen)
             spike_group.draw(screen)
             if not death:
                 player_group.draw(screen)
             portal1_group.draw(screen)
             portal2_group.draw(screen)
-            smoke_player.update(player.rect.x - 100, player.rect.y - 50)
+            smoke_player.update()
+            smoke_player.move(player.rect.x - 100, player.rect.y - 50)
             blade_group.draw(screen)
             death_group.draw(screen)
             font = pygame.font.Font(None, 50)
             pygame.draw.rect(screen, (76, 76, 76), (850, 25, 75, 50))
-
             len_count += speed
             to_blit = count_percent(level_x, tiles_group, player, percentage)
             percentage = to_blit

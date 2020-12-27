@@ -153,12 +153,14 @@ class AnimatedSprite(pygame.sprite.Sprite):
                 self.frames.append(sheet.subsurface(pygame.Rect(
                     frame_location, self.rect.size)))
 
-    def update(self, x, y):
+    def update(self):
         self.cur_frame = (self.cur_frame + 1) % len(self.frames)
         if self.spin:
             self.image = pygame.transform.rotate(self.frames[self.cur_frame], 90)
         else:
             self.image = self.frames[self.cur_frame]
+
+    def move(self, x, y):
         if x and y:
             self.rect.x = x
             self.rect.y = y
