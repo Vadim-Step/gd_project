@@ -33,7 +33,7 @@ def start_level(event, flag):
             mixer.pre_init()
             mixer.init()
             audio = mixer.Sound('gd_data\gd_mus1.mp3')
-            audio.play()
+            #audio.play()
             return percentage, flag, audio, level
         return False
 
@@ -63,7 +63,7 @@ def renew():
 
 
 def start():
-    global level1_passed, level2_passed, level3_passed
+    global level1_passed, level2_passed, level3_passed, level1_perc, level2_perc, level3_perc
     fon = pygame.transform.scale(load_image('gd_fon.png'), (1900, 600))
     screen.blit(fon, (0, 0))
     lvl1 = load_image('easy.png')
@@ -161,12 +161,22 @@ def start():
                 if event.key == pygame.K_SPACE:
                     PAUSE = not PAUSE
         if flag:
+            font = pygame.font.Font(None, 100)
             if level1_passed:
                 screen.blit(tick, (450, 400))
+            else:
+                percent = font.render(str(level1_perc) + '%', True, (100, 255, 100))
+                screen.blit(percent, (500, 450))
             if level2_passed:
                 screen.blit(tick, (850, 400))
+            else:
+                percent = font.render(str(level2_perc) + '%', True, (100, 255, 100))
+                screen.blit(percent, (900, 450))
             if level3_passed:
                 screen.blit(tick, (1250, 400))
+            else:
+                percent = font.render(str(level3_perc) + '%', True, (100, 255, 100))
+                screen.blit(percent, (1300, 450))
         if player and not flag and not PAUSE:
             screen.fill((0, 0, 0))
             if not death:
@@ -217,27 +227,26 @@ def start():
                                                           player.rect.x - 25, i, False)
                             fireworks.append(firework)
                     FPS = 20
-                    if death == 20:
-                        if level == 1:
-                            level1_passed = True
-                            screen.blit(tick, (450, 400))
-                        if level == 2:
-                            level2_passed = True
-                            screen.blit(tick, (850, 400))
-                        if level == 3:
-                            level3_passed = True
-                            screen.blit(tick, (1250, 400))
+                    if level == 1:
+                        level1_passed = True
+                    if level == 2:
+                        level2_passed = True
+                    if level == 3:
+                        level3_passed = True
             elif pygame.sprite.spritecollideany(player, wall_group) or \
                     player.collide_check(spike_group) or \
                     player.collide_check(blade_group):
                 if not death:
                     if level == 1:
+                        level1_perc = max(level1_perc, percentage)
                         death_effect = AnimatedSprite(load_image('death_effect1.png'), 8, 4,
                                                      player.rect.x - 50, player.rect.y - 70, False)
                     elif level == 2:
+                        level2_perc = max(level2_perc, percentage)
                         death_effect = AnimatedSprite(load_image('death_effect2.png'), 4, 4,
                                                      player.rect.x - 50, player.rect.y - 70, False)
                     elif level == 3:
+                        level3_perc = max(level3_perc, percentage)
                         death_effect = AnimatedSprite(load_image('death_effect3.png'), 5, 4,
                                                      player.rect.x - 50, player.rect.y - 70, False)
                 FPS = 20
