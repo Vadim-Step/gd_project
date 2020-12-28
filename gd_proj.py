@@ -64,8 +64,8 @@ def renew():
 
 def start():
     global level1_passed, level2_passed, level3_passed, level1_perc, level2_perc, level3_perc
-    fon = pygame.transform.scale(load_image('gd_fon.png'), (1900, 600))
-    screen.blit(fon, (0, 0))
+    fon = pygame.transform.scale(load_image('gd_bg.jpg'), (2200, 600))
+    screen.blit(fon, (-115, 0))
     lvl1 = load_image('easy.png')
     screen.blit(lvl1, (450, 250))
     lvl2 = load_image('normal1.png')
@@ -74,6 +74,7 @@ def start():
     screen.blit(lvl3, (1250, 250))
     pygame.display.set_caption('Перемещение героя. Новый уровень')
     tick = load_image('tick1.png')
+    home = pygame.transform.scale(load_image('home-green.png'), (40, 40))
     flag = True
     camera = Camera()
     player = False
@@ -145,6 +146,24 @@ def start():
                     PAUSE = False
                 if 975 <= event.pos[0] <= 1025 and 25 <= event.pos[1] <= 75:
                     PAUSE = True
+                if 1025 <= event.pos[0] <= 1075 and 25 <= event.pos[1] <= 75:
+                    screen.blit(fon, (-115, 0))
+                    screen.blit(lvl1, (450, 250))
+                    screen.blit(lvl2, (850, 250))
+                    screen.blit(lvl3, (1250, 250))
+                    player = False
+                    jumping = False
+                    speed = 0.1
+                    death = False
+                    death_effect = False
+                    FPS = 100
+                    fireworks = []
+                    smoke = []
+                    pulsating_effects = []
+                    len_count, level, stage, percentage, camera.dy = 0, 0, 0, 0, 0
+                    flag = True
+                    audio.stop()
+                    renew()
             if event.type == pygame.KEYDOWN:
                 if not PAUSE and not death:
                     if event.key == pygame.K_UP:
@@ -251,7 +270,7 @@ def start():
                                                      player.rect.x - 50, player.rect.y - 70, False)
                 FPS = 20
             if (level == 1 and death == 20) or (level > 1 and death == 15):
-                screen.blit(fon, (0, 0))
+                screen.blit(fon, (-115, 0))
                 screen.blit(lvl1, (450, 250))
                 screen.blit(lvl2, (850, 250))
                 screen.blit(lvl3, (1250, 250))
@@ -309,11 +328,13 @@ def start():
             death_group.draw(screen)
             font = pygame.font.Font(None, 50)
             pygame.draw.rect(screen, (76, 76, 76), (850, 25, 75, 50))
+            pygame.draw.rect(screen, (76, 76, 76), (1025, 25, 50, 50))
             len_count += speed
             to_blit = count_percent(level_x, tiles_group, player, percentage)
             percentage = to_blit
             perc = font.render(str(to_blit) + '%', True,
                                (100, 255, 100))
+            screen.blit(home, (1025, 33))
             screen.blit(perc, (850, 30))
             screen.blit(play, (925, 25))
             screen.blit(pause, (975, 25))
