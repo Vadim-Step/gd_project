@@ -21,10 +21,13 @@ def start_level(event, flag):
     if event.type == pygame.MOUSEBUTTONDOWN and flag:
         if 450 <= event.pos[0] <= 645 and 250 <= event.pos[1] <= 455:
             level = 1
+            audio = mixer.Sound('gd_data\gd_mus1.mp3')
         elif 850 <= event.pos[0] <= 1045 and 250 <= event.pos[1] <= 455:
             level = 2
+            audio = mixer.Sound('gd_data\gd_mus2.mp3')
         elif 1250 <= event.pos[0] <= 1445 and 250 <= event.pos[1] <= 455:
             level = 3
+            audio = mixer.Sound('gd_data\gd_mus3.mp3')
         else:
             level = 0
         if level != 0:
@@ -32,8 +35,7 @@ def start_level(event, flag):
             flag = False
             mixer.pre_init()
             mixer.init()
-            audio = mixer.Sound('gd_data\gd_mus1.mp3')
-            #audio.play()
+            audio.play()
             return percentage, flag, audio, level
         return False
 
@@ -255,6 +257,7 @@ def start():
             elif pygame.sprite.spritecollideany(player, wall_group) or \
                     player.collide_check(spike_group) or \
                     player.collide_check(blade_group):
+                audio.stop()
                 if not death:
                     if level == 1:
                         level1_perc = max(level1_perc, percentage)
