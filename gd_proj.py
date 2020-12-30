@@ -9,9 +9,9 @@ pygame.init()
 size = width, height = 1900, 500
 screen = pygame.display.set_mode(size)
 
-level1_passed = 0
-level2_passed = 0
-level3_passed = 0
+level1_passed = False
+level2_passed = False
+level3_passed = False
 level1_perc = 0
 level2_perc = 0
 level3_perc = 0
@@ -68,52 +68,30 @@ def start():
     global level1_passed, level2_passed, level3_passed, level1_perc, level2_perc, level3_perc
     fon = pygame.transform.scale(load_image('gd_bg.jpg'), (2200, 600))
     screen.blit(fon, (-115, 0))
-    lvl1 = load_image('easy.png')
+    lvl1, lvl2, lvl3 = load_image('easy.png'), load_image('normal1.png'), load_image('harder1.png')
     screen.blit(lvl1, (450, 250))
-    lvl2 = load_image('normal1.png')
     screen.blit(lvl2, (850, 250))
-    lvl3 = load_image('harder1.png')
     screen.blit(lvl3, (1250, 250))
-    pygame.display.set_caption('Перемещение героя. Новый уровень')
+    pygame.display.set_caption('GEOMETRY CRASH')
     tick = load_image('tick1.png')
     home = pygame.transform.scale(load_image('home-green.png'), (40, 40))
     flag = True
     camera = Camera()
-    player = False
-    stage = 0
-    count = 0
-    FPS = 100
-    jumping = False
-    speed = 0.1
-    PAUSE = False
+    player, jumping, PAUSE, portal1, portal2, death_effect, moving_down =\
+        False, False, False, False, False, False, False
     play = pygame.transform.scale(load_image('play.jpg'), (50, 50))
     pause = pygame.transform.scale(load_image('pause.jpg'), (50, 50))
-    len_count = 0
-    portal1 = False
-    portal2 = False
-    death_effect = False
-    moving_down = False
-    fireworks = []
-    smoke = []
-    pulsating_effects = []
-    death = 0
-    level = 0
+    pulsating_effects, smoke, fireworks = [], [], []
+    level, death, len_count, count, stage, FPS, speed = 0, 0, 0, 0, 0, 100, 0.1
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
-            lvl = start_level(event, flag)
-            if lvl:
-                percentage, flag, audio, level = lvl
-                if level == 1:
-                    file = 'gd_data/points.txt'
-                    file2 = 'phon2.png'
-                if level == 2:
-                    file = 'gd_data/points2.txt'
-                    file2 = 'fon.jpg'
-                if level == 3:
-                    file = 'gd_data/points.txt'
-                    file2 = 'city.jpg'
+            level_data = start_level(event, flag)
+            if level_data:
+                percentage, flag, audio, level = level_data
+                file = f'gd_data/level{level}.txt'
+                file2 = f'background{level}.jpg'
                 player, level_x, level_y = generate_level(load_level(file), level)
                 fon2 = pygame.transform.scale(load_image(file2), (tile_size * level_x, 450))
                 x = player.x
@@ -153,15 +131,10 @@ def start():
                     screen.blit(lvl1, (450, 250))
                     screen.blit(lvl2, (850, 250))
                     screen.blit(lvl3, (1250, 250))
-                    player = False
-                    jumping = False
-                    speed = 0.1
-                    death = False
-                    death_effect = False
-                    FPS = 100
-                    fireworks = []
-                    smoke = []
-                    pulsating_effects = []
+                    player, jumping, PAUSE, portal1, portal2, death_effect, moving_down = \
+                        False, False, False, False, False, False, False
+                    pulsating_effects, smoke, fireworks = [], [], []
+                    speed, death, FPS = 0.1, 0, 100
                     len_count, level, stage, percentage, camera.dy = 0, 0, 0, 0, 0
                     flag = True
                     audio.stop()
@@ -181,23 +154,22 @@ def start():
                         y += y_delta
                 if event.key == pygame.K_SPACE:
                     PAUSE = not PAUSE
+                    if PAUSE:
+                        mixer.pause()
+                    else:
+                        mixer.unpause()
         if flag:
             font = pygame.font.Font(None, 100)
-            if level1_passed:
-                screen.blit(tick, (450, 400))
-            else:
-                percent = font.render(str(level1_perc) + '%', True, (100, 255, 100))
-                screen.blit(percent, (500, 450))
-            if level2_passed:
-                screen.blit(tick, (850, 400))
-            else:
-                percent = font.render(str(level2_perc) + '%', True, (100, 255, 100))
-                screen.blit(percent, (900, 450))
-            if level3_passed:
-                screen.blit(tick, (1250, 400))
-            else:
-                percent = font.render(str(level3_perc) + '%', True, (100, 255, 100))
-                screen.blit(percent, (1300, 450))
+            ticks = [(450, 400), (850, 400), (1250, 400)]
+            coords = [(500, 450), (900, 450), (1300, 450)]
+            percentages_levels = [level1_passed, level2_passed, level3_passed,
+                                  level1_perc, level2_perc, level3_perc]
+            for i in range(3):
+                if percentages_levels[i]:
+                    screen.blit(tick, ticks[i])
+                else:
+                    screen.blit(font.render(str(percentages_levels[i + 3]) + '%', True, (100, 255, 100)),
+                                coords[i])
         if player and not flag and not PAUSE:
             screen.fill((0, 0, 0))
             if not death:
@@ -236,16 +208,12 @@ def start():
             if pygame.sprite.spritecollideany(player, end_group):
                 if player.collide_check(end_group):
                     if not fireworks:
+                        fireworks_ = [(load_image(f'firework1.png'), 6, 5, player.rect.x - 25),
+                                      (load_image(f'firework2.png'), 5, 8, player.rect.x - 25),
+                                      (load_image(f'firework3.png'), 5, 5, player.rect.x - 25)]
                         for i in range(25, 400, 100):
-                            if level == 1:
-                                firework = AnimatedSprite(load_image(f'firework1.png'), 6, 5,
-                                                          player.rect.x - 25, i, False)
-                            if level == 2:
-                                firework = AnimatedSprite(load_image(f'firework2.png'), 5, 8,
-                                                          player.rect.x - 25, i, False)
-                            if level == 3:
-                                firework = AnimatedSprite(load_image(f'firework3.png'), 5, 5,
-                                                          player.rect.x - 25, i, False)
+                            firework = AnimatedSprite(*fireworks_[level - 1], i, False)
+
                             fireworks.append(firework)
                     FPS = 20
                     if level == 1:
@@ -262,30 +230,25 @@ def start():
                     if level == 1:
                         level1_perc = max(level1_perc, percentage)
                         death_effect = AnimatedSprite(load_image('death_effect1.png'), 8, 4,
-                                                     player.rect.x - 50, player.rect.y - 70, False)
+                                                      player.rect.x - 50, player.rect.y - 70, False)
                     elif level == 2:
                         level2_perc = max(level2_perc, percentage)
                         death_effect = AnimatedSprite(load_image('death_effect2.png'), 4, 4,
-                                                     player.rect.x - 50, player.rect.y - 70, False)
+                                                      player.rect.x - 50, player.rect.y - 70, False)
                     elif level == 3:
                         level3_perc = max(level3_perc, percentage)
                         death_effect = AnimatedSprite(load_image('death_effect3.png'), 5, 4,
-                                                     player.rect.x - 50, player.rect.y - 70, False)
+                                                      player.rect.x - 50, player.rect.y - 70, False)
                 FPS = 20
             if (level == 1 and death == 20) or (level > 1 and death == 15):
                 screen.blit(fon, (-115, 0))
                 screen.blit(lvl1, (450, 250))
                 screen.blit(lvl2, (850, 250))
                 screen.blit(lvl3, (1250, 250))
-                player = False
-                jumping = False
-                speed = 0.1
-                death = False
-                death_effect = False
-                FPS = 100
-                fireworks = []
-                smoke = []
-                pulsating_effects = []
+                player, jumping, PAUSE, portal1, portal2, death_effect, moving_down = \
+                    False, False, False, False, False, False, False
+                speed, death, FPS = 0.1, 0, 100
+                pulsating_effects, smoke, fireworks = [], [], []
                 len_count, level, stage, percentage, camera.dy = 0, 0, 0, 0, 0
                 flag = True
                 audio.stop()
@@ -335,10 +298,9 @@ def start():
             len_count += speed
             to_blit = count_percent(level_x, tiles_group, player, percentage)
             percentage = to_blit
-            perc = font.render(str(to_blit) + '%', True,
-                               (100, 255, 100))
+            percent = font.render(str(to_blit) + '%', True, (100, 255, 100))
             screen.blit(home, (1025, 33))
-            screen.blit(perc, (850, 30))
+            screen.blit(percent, (850, 30))
             screen.blit(play, (925, 25))
             screen.blit(pause, (975, 25))
 
