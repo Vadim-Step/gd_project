@@ -74,6 +74,7 @@ def start():
     screen.blit(lvl3, (1250, 250))
     pygame.display.set_caption('GEOMETRY CRASH')
     tick = load_image('tick1.png')
+    death_sound = mixer.Sound('gd_data\death_sound.mp3')
     home = pygame.transform.scale(load_image('home-green.png'), (40, 40))
     flag = True
     camera = Camera()
@@ -226,7 +227,9 @@ def start():
                     player.collide_check(spike_group) or \
                     player.collide_check(blade_group):
                 audio.stop()
+
                 if not death:
+                    death_sound.play()
                     if level == 1:
                         level1_perc = max(level1_perc, percentage)
                         death_effect = AnimatedSprite(load_image('death_effect1.png'), 8, 4,
