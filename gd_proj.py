@@ -21,13 +21,13 @@ def start_level(event, flag):
     if event.type == pygame.MOUSEBUTTONDOWN and flag:
         if 450 <= event.pos[0] <= 645 and 250 <= event.pos[1] <= 455:
             level = 1
-            audio = mixer.Sound('gd_data\gd_mus1.mp3')
+            audio = mixer.Sound('gd_data/music/gd_mus1.mp3')
         elif 850 <= event.pos[0] <= 1045 and 250 <= event.pos[1] <= 455:
             level = 2
-            audio = mixer.Sound('gd_data\gd_mus2.mp3')
+            audio = mixer.Sound('gd_data/music/gd_mus2.mp3')
         elif 1250 <= event.pos[0] <= 1445 and 250 <= event.pos[1] <= 455:
             level = 3
-            audio = mixer.Sound('gd_data\gd_mus3.mp3')
+            audio = mixer.Sound('gd_data/music/gd_mus3.mp3')
         else:
             level = 0
         if level != 0:
@@ -66,22 +66,22 @@ def renew():
 
 def start():
     global level1_passed, level2_passed, level3_passed, level1_perc, level2_perc, level3_perc
-    fon = pygame.transform.scale(load_image('gd_bg.jpg'), (2200, 600))
+    fon = pygame.transform.scale(load_image('pictures/gd_bg.jpg'), (2200, 600))
     screen.blit(fon, (-115, 0))
-    lvl1, lvl2, lvl3 = load_image('easy.png'), load_image('normal1.png'), load_image('harder1.png')
+    lvl1, lvl2, lvl3 = load_image('pictures/easy.png'), load_image('pictures/normal1.png'), load_image('pictures/harder1.png')
     screen.blit(lvl1, (450, 250))
     screen.blit(lvl2, (850, 250))
     screen.blit(lvl3, (1250, 250))
     pygame.display.set_caption('GEOMETRY CRASH')
-    tick = load_image('tick1.png')
-    death_sound = mixer.Sound('gd_data\death_sound.mp3')
-    home = pygame.transform.scale(load_image('home-green.png'), (40, 40))
+    tick = load_image('pictures/tick1.png')
+    death_sound = mixer.Sound('gd_data/music/death_sound.mp3')
+    home = pygame.transform.scale(load_image('pictures/home-green.png'), (40, 40))
     flag = True
     camera = Camera()
     player, jumping, PAUSE, portal1, portal2, death_effect, moving_down =\
         False, False, False, False, False, False, False
-    play = pygame.transform.scale(load_image('play.jpg'), (50, 50))
-    pause = pygame.transform.scale(load_image('pause.jpg'), (50, 50))
+    play = pygame.transform.scale(load_image('pictures/play.jpg'), (50, 50))
+    pause = pygame.transform.scale(load_image('pictures/pause.jpg'), (50, 50))
     pulsating_effects, smoke, fireworks = [], [], []
     level, death, len_count, count, stage, FPS, speed = 0, 0, 0, 0, 0, 100, 0.1
     while True:
@@ -91,28 +91,28 @@ def start():
             level_data = start_level(event, flag)
             if level_data:
                 percentage, flag, audio, level = level_data
-                file = f'gd_data/level{level}.txt'
-                file2 = f'background{level}.jpg'
+                file = f'gd_data/levels/level{level}.txt'
+                file2 = f'pictures/background{level}.jpg'
                 player, level_x, level_y = generate_level(load_level(file), level)
                 fon2 = pygame.transform.scale(load_image(file2), (tile_size * level_x, 450))
                 x = player.x
                 y = player.y
-                smoke_player = AnimatedSprite(load_image('smokepuff.png'), 8, 8,
+                smoke_player = AnimatedSprite(load_image('effects/smokepuff.png'), 8, 8,
                                               player.rect.x - 50, player.y, True)
                 while len(pulsating_effects) < 20:
                     if level == 1:
                         pulsating_effect = AnimatedSprite(
-                            load_image(f'effect{random.choice([1, 2])}.png'), 10, 6,
+                            load_image(f'effects/effect{random.choice([1, 2])}.png'), 10, 6,
                             random.choice(range(100, tile_size * level_x)),
                             random.choice(range(100, 400)), False)
                     if level == 2:
                         pulsating_effect = AnimatedSprite(
-                            load_image(f'effect{random.choice([3, 4])}.png'), 8, 2,
+                            load_image(f'effects/effect{random.choice([3, 4])}.png'), 8, 2,
                             random.choice(range(100, tile_size * level_x)),
                             random.choice(range(100, 400)), False)
                     if level == 3:
                         pulsating_effect = AnimatedSprite(
-                            load_image(f'effect{random.choice([5, 6])}.png'), 4, 4,
+                            load_image(f'effects/effect{random.choice([5, 6])}.png'), 4, 4,
                             random.choice(range(100, tile_size * level_x)),
                             random.choice(range(100, 400)), False)
                     if not pygame.sprite.spritecollideany(pulsating_effect, wall_group) and \
@@ -209,9 +209,9 @@ def start():
             if pygame.sprite.spritecollideany(player, end_group):
                 if player.collide_check(end_group):
                     if not fireworks:
-                        fireworks_ = [(load_image(f'firework1.png'), 6, 5, player.rect.x - 25),
-                                      (load_image(f'firework2.png'), 5, 8, player.rect.x - 25),
-                                      (load_image(f'firework3.png'), 5, 5, player.rect.x - 25)]
+                        fireworks_ = [(load_image(f'effects/firework1.png'), 6, 5, player.rect.x - 25),
+                                      (load_image(f'effects/firework2.png'), 5, 8, player.rect.x - 25),
+                                      (load_image(f'effects/firework3.png'), 5, 5, player.rect.x - 25)]
                         for i in range(25, 400, 100):
                             firework = AnimatedSprite(*fireworks_[level - 1], i, False)
 
@@ -227,20 +227,19 @@ def start():
                     player.collide_check(spike_group) or \
                     player.collide_check(blade_group):
                 audio.stop()
-
                 if not death:
                     death_sound.play()
                     if level == 1:
                         level1_perc = max(level1_perc, percentage)
-                        death_effect = AnimatedSprite(load_image('death_effect1.png'), 8, 4,
+                        death_effect = AnimatedSprite(load_image('effects/death_effect1.png'), 8, 4,
                                                       player.rect.x - 50, player.rect.y - 70, False)
                     elif level == 2:
                         level2_perc = max(level2_perc, percentage)
-                        death_effect = AnimatedSprite(load_image('death_effect2.png'), 4, 4,
+                        death_effect = AnimatedSprite(load_image('effects/death_effect2.png'), 4, 4,
                                                       player.rect.x - 50, player.rect.y - 70, False)
                     elif level == 3:
                         level3_perc = max(level3_perc, percentage)
-                        death_effect = AnimatedSprite(load_image('death_effect3.png'), 5, 4,
+                        death_effect = AnimatedSprite(load_image('effects/death_effect3.png'), 5, 4,
                                                       player.rect.x - 50, player.rect.y - 70, False)
                 FPS = 20
             if (level == 1 and death == 20) or (level > 1 and death == 15):
@@ -276,7 +275,7 @@ def start():
                     i.rotate()
             if not smoke:
                 for i in range(0, 400, 50):
-                    smok = AnimatedSprite(load_image('Smoke.png'), 6, 5,
+                    smok = AnimatedSprite(load_image('effects/Smoke.png'), 6, 5,
                                           tile_size * level_x + 700, i, False)
                     smoke.append(smok)
             for i in smoke:

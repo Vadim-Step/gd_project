@@ -167,23 +167,23 @@ class AnimatedSprite(pygame.sprite.Sprite):
 
 
 tile_images = {
-    'wall2': load_image('block1.png'),
-    'wall': load_image('gd_block.jpg'),
-    'end': load_image('gd_block.jpg'),
-    'start': load_image('gd_block.jpg'),
-    'blade': load_image('sawblade.png'),
-    'blade1': load_image('blade.png'),
-    'blade2': load_image('sawblade1.png'),
-    'spike': load_image('spike1.png'),
-    'spike2': pygame.transform.flip(load_image('spike1.png'), False, True),
-    'empty': load_image('gd_blue.png'),
-    'empty2': load_image('gd_pink.jpg'),
-    'portal1': load_image('portal1.png', -1),
-    'portal2': load_image('portal2.png', -1)
+    'wall2': load_image('objects/block1.png'),
+    'wall': load_image('objects/gd_block.jpg'),
+    'end': load_image('objects/gd_block.jpg'),
+    'start': load_image('objects/gd_block.jpg'),
+    'blade': load_image('objects/sawblade.png'),
+    'blade1': load_image('objects/blade.png'),
+    'blade2': load_image('objects/sawblade1.png'),
+    'spike': load_image('objects/spike1.png'),
+    'spike2': pygame.transform.flip(load_image('objects/spike1.png'), False, True),
+    'empty': load_image('objects/gd_blue.png'),
+    'empty2': load_image('objects/gd_pink.jpg'),
+    'portal1': load_image('objects/portal1.png', -1),
+    'portal2': load_image('objects/portal2.png', -1)
 }
-player_image1 = load_image('gdship.png', -1)
-player_image2 = load_image('gd_icon1.png', 1)
-player_image3 = load_image('gdship.png', 1)
+player_image1 = load_image('pictures/gdship.png', -1)
+player_image2 = load_image('pictures/gd_icon1.png', 1)
+player_image3 = load_image('pictures/gdship.png', 1)
 tile_width = tile_height = tile_size = 50
 player = None
 
