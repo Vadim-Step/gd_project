@@ -41,10 +41,10 @@ def start_level(event, flag):
 
 
 def count_percent(level_x, tiles_group, player, percent):
-    koeff = level_x / 100
+    koeff = (level_x + 1) / 100
     for i in tiles_group:
         if i.rect:
-            if i.rect.x - 10 <= player.rect.x - 30 <= i.rect.x + 10:
+            if i.rect.x - 15 <= player.rect.x - 40 <= i.rect.x + 15:
                 percentage = int(i.pos_x / koeff) + 2
                 return percentage
     return percent
@@ -147,7 +147,7 @@ def start():
                             x_delta, y_delta = player.careful_move(0, 1, wall_group)
                             x += x_delta
                             y += y_delta
-                        elif level != 1 and not moving_down:
+                        elif level != 1 and not moving_down and not jumping:
                             jumping = True
                     if event.key == pygame.K_DOWN and level == 1:
                         x_delta, y_delta = player.careful_move(0, -1, wall_group)
@@ -185,6 +185,10 @@ def start():
                         x_delta, y_delta = player.careful_move(0, -0.14, wall_group)
                         x += x_delta
                         y += y_delta
+                        if x_delta or y_delta:
+                            moving_down = True
+                        else:
+                            moving_down = False
                 count += 1
                 if player.collide_check(wall_group):
                     jumping = False
