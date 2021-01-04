@@ -74,7 +74,6 @@ def start():
     screen.blit(lvl3, (1250, 250))
     pygame.display.set_caption('GEOMETRY CRASH')
     tick = load_image('pictures/tick1.png')
-    death_sound = mixer.Sound('gd_data/music/death_sound.mp3')
     home = pygame.transform.scale(load_image('pictures/home-green.png'), (40, 40))
     flag = True
     camera = Camera()
@@ -91,6 +90,7 @@ def start():
             level_data = start_level(event, flag)
             if level_data:
                 percentage, flag, audio, level = level_data
+                death_sound = mixer.Sound(f'gd_data/music/death_sound{level}.mp3')
                 file = f'gd_data/levels/level{level}.txt'
                 file2 = f'pictures/background{level}.jpg'
                 player, level_x, level_y = generate_level(load_level(file), level)
