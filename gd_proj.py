@@ -1,4 +1,4 @@
-from gd_classes import *
+from gd_funct import *
 import pygame
 from pygame import mixer
 import random
@@ -17,58 +17,12 @@ level2_perc = 0
 level3_perc = 0
 
 
-def start_level(event, flag):
-    if event.type == pygame.MOUSEBUTTONDOWN and flag:
-        if 450 <= event.pos[0] <= 645 and 250 <= event.pos[1] <= 455:
-            level = 1
-            audio = mixer.Sound('gd_data/music/gd_mus1.mp3')
-        elif 850 <= event.pos[0] <= 1045 and 250 <= event.pos[1] <= 455:
-            level = 2
-            audio = mixer.Sound('gd_data/music/gd_mus2.mp3')
-        elif 1250 <= event.pos[0] <= 1445 and 250 <= event.pos[1] <= 455:
-            level = 3
-            audio = mixer.Sound('gd_data/music/gd_mus3.mp3')
-        else:
-            level = 0
-        if level != 0:
-            percentage = 0
-            flag = False
-            mixer.pre_init()
-            mixer.init()
-            audio.play()
-            return percentage, flag, audio, level
-        return False
-
-
-def count_percent(level_x, tiles_group, player, percent):
-    koeff = (level_x + 1) / 100
-    for i in tiles_group:
-        if i.rect:
-            if i.rect.x - 15 <= player.rect.x - 40 <= i.rect.x + 15:
-                percentage = int(i.pos_x / koeff) + 2
-                return percentage
-    return percent
-
-
-def renew():
-    all_sprites.empty()
-    tiles_group.empty()
-    wall_group.empty()
-    end_group.empty()
-    spike_group.empty()
-    blade_group.empty()
-    player_group.empty()
-    portal1_group.empty()
-    portal2_group.empty()
-    start_group.empty()
-    death_group.empty()
-
-
-def start():
+def game_function():
     global level1_passed, level2_passed, level3_passed, level1_perc, level2_perc, level3_perc
     fon = pygame.transform.scale(load_image('pictures/gd_bg.jpg'), (2200, 600))
     screen.blit(fon, (-115, 0))
-    lvl1, lvl2, lvl3 = load_image('pictures/easy.png'), load_image('pictures/normal1.png'), load_image('pictures/harder1.png')
+    lvl1, lvl2, lvl3 = load_image('pictures/easy.png'), load_image('pictures/normal1.png'), load_image(
+        'pictures/harder1.png')
     screen.blit(lvl1, (450, 250))
     screen.blit(lvl2, (850, 250))
     screen.blit(lvl3, (1250, 250))
@@ -77,7 +31,7 @@ def start():
     home = pygame.transform.scale(load_image('pictures/home-green.png'), (40, 40))
     flag = True
     camera = Camera()
-    player, jumping, PAUSE, portal1, portal2, death_effect, moving_down =\
+    player, jumping, PAUSE, portal1, portal2, death_effect, moving_down = \
         False, False, False, False, False, False, False
     play = pygame.transform.scale(load_image('pictures/play.jpg'), (50, 50))
     pause = pygame.transform.scale(load_image('pictures/pause.jpg'), (50, 50))
@@ -317,4 +271,4 @@ def start():
 pygame.init()
 clock = pygame.time.Clock()
 screen = pygame.display.set_mode((1900, 600))
-start()
+game_function()
