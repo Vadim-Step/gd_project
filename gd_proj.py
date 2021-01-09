@@ -79,8 +79,10 @@ def game_function():
             if event.type == pygame.MOUSEBUTTONDOWN and not flag:
                 if 925 <= event.pos[0] <= 975 and 25 <= event.pos[1] <= 75:
                     PAUSE = False
+                    mixer.unpause()
                 if 975 <= event.pos[0] <= 1025 and 25 <= event.pos[1] <= 75:
                     PAUSE = True
+                    mixer.pause()
                 if 1025 <= event.pos[0] <= 1075 and 25 <= event.pos[1] <= 75:
                     screen.blit(fon, (-115, 0))
                     screen.blit(lvl1, (450, 250))
