@@ -141,5 +141,6 @@ def generate_level(level, num=1):
                     Tile('spike2', x, y)
                 if level[y][x] == '@':
                     Tile('empty2', x, y)
-                    new_player = Player(x, y, player_image2)
+                    image = player_image2 if num == 2 else player_image3
+                    new_player = Player(x, y, image)
         return new_player, x, y

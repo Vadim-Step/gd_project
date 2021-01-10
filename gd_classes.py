@@ -84,9 +84,9 @@ tile_images = {
     'portal1': load_image('objects/portal1.png', -1),
     'portal2': load_image('objects/portal2.png', -1)
 }
-player_image1 = load_image('pictures/gdship.png', -1)
-player_image2 = load_image('pictures/gd_icon1.png', 1)
-player_image3 = load_image('pictures/gdship.png', 1)
+player_image1 = load_image('pictures/gdship1.png', -1)
+player_image2 = load_image('pictures/gd_icon1.png', -1)
+player_image3 = load_image('pictures/gd_icon2.png', 1)
 tile_width = tile_height = tile_size = 50
 player = None
 
