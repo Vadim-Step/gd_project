@@ -26,6 +26,7 @@ def game_function():
     screen.blit(lvl1, (450, 250))
     screen.blit(lvl2, (850, 250))
     screen.blit(lvl3, (1250, 250))
+    clock = pygame.time.Clock()
     pygame.display.set_caption('GEOMETRY CRASH')
     tick = load_image('pictures/tick1.png')
     home = pygame.transform.scale(load_image('pictures/home-green.png'), (40, 40))
@@ -268,9 +269,3 @@ def game_function():
 
         pygame.display.flip()
         clock.tick(FPS)
-
-
-pygame.init()
-clock = pygame.time.Clock()
-screen = pygame.display.set_mode((1900, 600))
-game_function()

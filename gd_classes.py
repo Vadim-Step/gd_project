@@ -86,7 +86,7 @@ tile_images = {
 }
 player_image1 = load_image('pictures/gdship1.png', -1)
 player_image2 = load_image('pictures/gd_icon1.png', -1)
-player_image3 = load_image('pictures/gd_icon2.png', 1)
+player_image3 = load_image('pictures/gd_icon2.png', -1)
 tile_width = tile_height = tile_size = 50
 player = None
 
