@@ -1,8 +1,9 @@
 from gd_classes import *
 
-
-def start_level(event, flag):
-    if event.type == pygame.MOUSEBUTTONDOWN and flag:
+#отслеживаем события на нажатия таблицы рейтингов
+#отслеживаем события на ввод никнейма
+def start_level(event, flag, shop):
+    if event.type == pygame.MOUSEBUTTONDOWN and flag and not shop.active:
         if 450 <= event.pos[0] <= 645 and 250 <= event.pos[1] <= 455:
             level = 1
             audio = pygame.mixer.Sound('gd_data/music/gd_mus1.mp3')
@@ -21,7 +22,7 @@ def start_level(event, flag):
             pygame.mixer.init()
             audio.play()
             return percentage, flag, audio, level
-        return False
+    return False
 
 
 def count_percent(level_x, tiles_group, player, percent):
@@ -71,7 +72,7 @@ def load_level(filename):
     return list(map(lambda x: x.ljust(max_width, '.'), level_map))
 
 
-def generate_level(level, num=1):
+def generate_level(level, player_image, num=1):
     new_player, x, y = None, None, None
     if num == 1:
         for y in range(len(level)):
@@ -106,7 +107,7 @@ def generate_level(level, num=1):
                     Tile('portal2', x, y)
                 if level[y][x] == '@':
                     Tile('empty', x, y)
-                    new_player = Player(x, y, player_image1)
+                    new_player = Player(x, y, player_image)
         return new_player, x, y
     if num == 2 or num == 3:
         for y in range(len(level)):
@@ -141,5 +142,5 @@ def generate_level(level, num=1):
                     Tile('spike2', x, y)
                 if level[y][x] == '@':
                     Tile('empty2', x, y)
-                    new_player = Player(x, y, player_image2)
+                    new_player = Player(x, y, player_image)
         return new_player, x, y

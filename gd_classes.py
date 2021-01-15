@@ -1,6 +1,7 @@
 import pygame
 import os
 import sys
+import Database as db
 
 pygame.init()
 size = width, height = 1900, 500
@@ -158,3 +159,100 @@ class Camera:
     def update(self, target):
         self.dx = -(target.rect.x + target.rect.w // 2 - width // 2)
         self.dy += 1
+
+
+class Shop:
+    def __init__(self, name_file):
+        self.active = False
+        self.name_file = name_file
+        self.products = {}
+        self.coords = []
+
+    def load(self):
+        lst = db.findallProducts()
+        for product in lst:
+            font_text = pygame.font.Font(None, 40)
+            font_text_price = pygame.font.Font(None, 32)
+            text = font_text.render(product[2], True, (250, 250, 250))
+            text_price = font_text_price.render(str(product[3]), True, (250, 250, 250))
+            if product[1] in self.products:
+                self.products[product[1]].append({"text": text, "price": int(product[3]), "text_price": text_price, "image": load_image(product[4], -1), 'product': product[2]})
+            else:
+                self.products[product[1]] = [{"text": text, "price": int(product[3]), "text_price": text_price, "image": load_image(product[4], -1), 'product': product[2]}]
+
+    def show(self, screen, user):
+        x = 750
+        y = 220
+        for el in self.products.items():
+            for product in el[1]:
+                screen.blit(product["text"], (x, y + 60))
+                screen.blit(product["text_price"], (x, y + 90))
+                screen.blit(product["image"], (x, y))
+
+                if not db.findUserProduct([user.username, product['product']]):
+                    pygame.draw.rect(screen, (0, 250, 0), (x + 15, y + 130, 125, 50))
+                    pygame.draw.rect(screen, (0, 0, 0), (x + 15, y + 130, 125, 50), 5)
+                    self.coords.append([x + 15, y + 130, 125, 50, product])
+                    font = pygame.font.Font(None, 40)
+                    text = font.render("КУПИТЬ", True, (0, 0, 0))
+                    screen.blit(text, (x + 21, y + 143))
+                else:
+                    pygame.draw.rect(screen, (230, 230, 230), (x + 15, y + 130, 150, 50))
+                    pygame.draw.rect(screen, (0, 0, 0), (x + 15, y + 130, 150, 50), 5)
+                    self.coords.append([x + 15, y + 130, 125, 50, product])
+                    font = pygame.font.Font(None, 40)
+                    text = font.render("КУПЛЕНО", True, (0, 0, 0))
+                    screen.blit(text, (x + 21, y + 143))
+
+                coin = pygame.transform.scale(load_image('pictures/coin2.png'), (15, 15))
+                screen.blit(coin, (x + 40, y + 93))
+                y += 250
+            x += 250
+            y = 220
+
+
+    def buy(self, product, user):
+        if not db.findUserProduct([user.username, product['product']]):
+            if int(user.get_coin()) > product['price']:
+                db.insertUserProduct([user.username, product['product'], 1])
+                user.lost_coins += product['price']
+                user.update()
+
+
+class User:
+    def __init__(self, username='None'):
+        user = db.findUser([username])
+        if not user:
+            db.insertUser([username])
+            user = db.findUser([username])
+        self.username = username
+        self.lvl1_percentage = user[0][2]
+        self.lvl2_percentage = user[0][3]
+        self.lvl3_percentage = user[0][4]
+        self.lost_coins = user[0][5]
+
+    def update(self):
+        db.updateUser([self.lvl1_percentage, self.lvl2_percentage, self.lvl3_percentage, self.lost_coins, self.username])
+
+    def get_coin(self):
+        return str(self.lvl1_percentage + self.lvl2_percentage + self.lvl3_percentage - self.lost_coins)
+
+    def load_image(self, level, prod):
+        products = db.findallUserProducts([self.username])
+        if level == 2 or level == 3:
+            self.player_image = load_image('pictures/gd_icon1.png', 1)
+            print(products)
+            if products:
+                for el in products:
+                    if el[2] == 'Green-cube':
+                        self.player_image = prod['lvl1'][0]['image']
+        else:
+            self.player_image = load_image('pictures/gdship.png', -1)
+            print(products)
+            if products:
+                for el in products:
+                    if el[2] == 'Fast-rocket':
+                        self.player_image = prod['lvl2'][0]['image']
+
+    def get_image(self):
+        return self.player_image
