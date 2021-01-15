@@ -1,7 +1,5 @@
 from gd_classes import *
 
-#отслеживаем события на нажатия таблицы рейтингов
-#отслеживаем события на ввод никнейма
 def start_level(event, flag, shop):
     if event.type == pygame.MOUSEBUTTONDOWN and flag and not shop.active:
         if 450 <= event.pos[0] <= 645 and 250 <= event.pos[1] <= 455:
