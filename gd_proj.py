@@ -37,6 +37,8 @@ def game_function():
     pulsating_effects, smoke, fireworks = [], [], []
     level, death, len_count, count, stage, FPS, speed = 0, 0, 0, 0, 0, 100, 0.1
 
+    clock = pygame.time.Clock()
+
     input_rect = pygame.Rect(700, 225, 400, 50)
     active = False
     nickname = ''
@@ -363,9 +365,3 @@ def game_function():
 
             pygame.display.flip()
             clock.tick(FPS)
-
-
-pygame.init()
-clock = pygame.time.Clock()
-screen = pygame.display.set_mode((1900, 600))
-game_function()

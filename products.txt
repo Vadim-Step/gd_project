@@ -1,0 +1,2 @@
+'lvl1', 'Green-cube', 150, 'pictures/gd_icon3.jpg'
+'lvl1', 'Fast-rocket', 80, 'pictures/gdship2.png'
