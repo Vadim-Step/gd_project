@@ -241,14 +241,12 @@ class User:
         products = db.findallUserProducts([self.username])
         if level == 2 or level == 3:
             self.player_image = load_image('pictures/gd_icon1.png', 1)
-            print(products)
             if products:
                 for el in products:
                     if el[2] == 'Green-cube':
                         self.player_image = prod['lvl1'][0]['image']
         else:
             self.player_image = load_image('pictures/gdship.png', -1)
-            print(products)
             if products:
                 for el in products:
                     if el[2] == 'Fast-rocket':
